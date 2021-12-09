@@ -1,0 +1,21 @@
+* {
+  font-family: sans-serif;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+#map {
+  margin: 1rem 0;
+  height: 640px;
+  border-radius: 16px;
+  border: 2px solid #6666;
+}
+.container {
+  padding: 2rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
