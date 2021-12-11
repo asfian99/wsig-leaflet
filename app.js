@@ -1,5 +1,5 @@
-import express from "express";
-import { PrismaClient } from "@prisma/client";
+const express = require("express");
+const PrismaClient = require("@prisma/client").PrismaClient;
 
 const app = express();
 const PORT = 5000;
