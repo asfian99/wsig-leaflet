@@ -8,10 +8,10 @@ const prisma = new PrismaClient();
 
 const main = async () => {
   app.use(express.static("./public"));
+  app.use(express.urlencoded({ extended: true }));
 
   app.set("views", "./views");
   app.set("view engine", "ejs");
-  app.use(express.urlencoded({ extended: true }));
 
   app.get("/", async (_req, res) => {
     const allPom = await prisma.pomStation.findMany();
