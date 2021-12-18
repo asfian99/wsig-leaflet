@@ -6,16 +6,6 @@
       <h1>Testing Leaflet Map</h1>
       <div class="layout">
         <div id="map"></div>
-        <div class="list">
-          <% if (data.length > 0) { %> 
-            <% data.forEach(pom => { %>
-              <h3 id='<%= pom.id %>' style="margin-top: 1rem;"><%= pom.name %></h3>
-              <p><%= pom.address %></p>
-            <% }) %> 
-          <% } else { %>
-            <p>Data Pom Kosong...</p>
-          <% } %>
-        </div>
       </div>
     </div>
      <!-- footer -->
