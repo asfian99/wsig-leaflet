@@ -5,55 +5,48 @@
     <%- include('./layout/navbar'); %>
     <div class="container-fluid p-4">
       <div class="layout">
-        <div id="map"></div>
-        <div style="max-height: 80vh;">
-           <!-- search -->
-          <form class="d-flex mb-3">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
+        <div id="map" class="rounded-3"></div>
 
-          <div class="card overflow-auto" style="height: 90%;">
-            <ul class="list-group list-group-flush" >
-              <% if (data.length > 0) { %> 
-                <% data.forEach(pom => { %>
-                  <li class="list-group-item">
-                    <h4 id='<%= pom.id %>' style="cursor: pointer;"><%= pom.name %></h4>
-                    <p><%= pom.address %></p>
-                  </li>
-                <% }) %> 
-              <% } else { %>
-                <p>Data Pom Kosong...</p>
-              <% } %>
+        <div class="d-flex flex-column justify-content-start" style="max-height: 80vh;">
+           <!-- search -->
+          <div class="mb-3">
+            <input class="form-control me-2" id="search" type="search" placeholder="Cari nama atau alamat">
+          </div>
+
+          <div class="card overflow-auto" >
+            <ul id="list" class="list-group list-group-flush">
+             <!-- data masuk disini -->
             </ul>
           </div>
         </div>
       </div>
     </div>
+
     <script>
-      let coordinate = [-7.263013225873337, 112.75422315732179]
-      let zoomLevel = 12
+      const searchInput = document.getElementById("search")
+      const list = document.getElementById("list")
 
-      const map = L.map("map").setView(coordinate, zoomLevel);
-      let marker = null;
+      // koordinat awal
+      const coordinate = [-7.263013225873337, 112.75422315732179]
 
-      const stations = <%- JSON.stringify(data) %>
-      console.log(stations);
+      // membuat layer grup & format data
+      let layers = L.layerGroup();
+      let stations = <%- JSON.stringify(data) %>;
       
-      if(stations.length > 0) {
-        stations.forEach(item => {
-          let i = document.getElementById(String(item.id))
-          i.onclick = () => {
-            map.setView([item.coordinateX, item.coordinateY], 13.5);
-          }
-          marker = new L.marker([item.coordinateX, item.coordinateY]).bindPopup(item.name).addTo(map);
-        });
-      }
+      // menampilkan map
+      const map = L.map("map").setView(coordinate, 12);
 
+      // menampilkan data & marker
+      renderItem(stations);
+
+      // handle perubahan input search
+      searchInput.addEventListener('change', handleSearch);
+
+      // konfigurasi map 
       const tiles = L.tileLayer(
         "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw",
         {
-          maxZoom: 15,
+          maxZoom: 17,
           attribution:
             'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -63,6 +56,56 @@
         }
       ).addTo(map);
 
+      // fungsi untuk search
+      function handleSearch(e) {
+        const input = e.target.value;
+
+        if (!input) renderItem(stations);
+        else {
+          filteredStation = stations.filter(item => {
+            return item.name.toLowerCase().includes(input.toLowerCase()) ||
+                   item.address.toLowerCase().includes(input.toLowerCase())
+          });
+          renderItem(filteredStation);
+        }
+      };
+      
+      // fungsi untuk menampilkan data & marker
+      function renderItem(data) {
+        // reset view
+        list.innerHTML = '';
+        let markers = [];
+        let listItem = ''
+        if (layers) layers.clearLayers();
+
+        if (data.length > 0) {
+          data.forEach(item => {
+            listItem = `<li class="list-group-item">
+                          <h4 id="${item.id}" class="title">${item.name}</h4>
+                          <p>${item.address}</p>
+                        </li>`;
+
+            // menampilkan list data
+            list.insertAdjacentHTML('afterbegin', listItem);
+            
+            // klik nama data untuk zoom in
+            let title = document.getElementById(String(item.id));
+            title.onclick = () => map.setView([item.coordinateX, item.coordinateY], 18);
+
+            // buat marker untuk tiap data
+            markers = [...markers, L.marker([item.coordinateX, item.coordinateY]).bindPopup(item.name)];
+          });
+
+          // tampilkan marker
+          layers = L.layerGroup(markers).addTo(map);
+        } else {
+          listItem = `<li class="list-group-item">
+                        <h4 class="title">Data Tidak Ditemukan</h4>
+                      </li>`;
+
+          list.insertAdjacentHTML('afterbegin', listItem);
+        }
+      }
 
     </script>
   </body>
