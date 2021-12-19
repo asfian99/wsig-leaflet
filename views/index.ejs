@@ -2,36 +2,33 @@
 <html lang="en">
   <%- include('./layout/head'); %>
   <body>
-    <div class="container">
-      <h1>Testing Leaflet Map</h1>
+    <%- include('./layout/navbar'); %>
+    <div class="container-fluid p-4">
       <div class="layout">
         <div id="map"></div>
-        <div class="list">
-          <% if (data.length > 0) { %> 
-            <% data.forEach(pom => { %>
-              <h3 id='<%= pom.id %>' style="margin-top: 1rem;"><%= pom.name %></h3>
-              <p><%= pom.address %></p>
-            <% }) %> 
-          <% } else { %>
-            <p>Data Pom Kosong...</p>
-          <% } %>
+        <div style="max-height: 80vh;">
+           <!-- search -->
+          <form class="d-flex mb-3">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+
+          <div class="card overflow-auto" style="height: 90%;">
+            <ul class="list-group list-group-flush" >
+              <% if (data.length > 0) { %> 
+                <% data.forEach(pom => { %>
+                  <li class="list-group-item">
+                    <h4 id='<%= pom.id %>' style="cursor: pointer;"><%= pom.name %></h4>
+                    <p><%= pom.address %></p>
+                  </li>
+                <% }) %> 
+              <% } else { %>
+                <p>Data Pom Kosong...</p>
+              <% } %>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-     <!-- footer -->
- <div class="container">
-    <div class="row bg-dark p-5 text-white">
-        <div class="text-center">
-            <i class="bi-telephone-inbound">
-              0888939292929
-            </i>
-        </div>
-        <div class="text-center">
-            <i class="bi-envelope">
-                admin@admin.com
-            </i>
-        </div>
-    </div>
     </div>
     <script>
       let coordinate = [-7.263013225873337, 112.75422315732179]
